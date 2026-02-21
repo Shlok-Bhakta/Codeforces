@@ -57,13 +57,42 @@ inline int idx(const vector<T>& v,int i){return i<0?(int)v.size()+i:i;}
 const int INF  = 2e18;
 const int MOD  = 1e9+7;
 
-void solve(){
+int getscore(deque<char> &d){
+  char cur = d[0];
+  int count=1;
+  fore(i, 1, d.size()){
+    if(cur != d[i]){
+      count++;
+      cur = d[i];
+    }
+  }
+  return count;
+}
 
+void solve(){
+  int n; cin >> n;
+  string orig; cin >> orig;
+  deque<char> letters;
+  rep(i, n){
+    letters.push_back(orig[i]);
+  }
+  int maxlet = 0;
+  rep(i, n){
+    int score = getscore(letters);
+    if(score > maxlet){
+      maxlet = score;
+    }
+    // rot
+    char tmp = letters[0];
+    letters.pop_front();
+    letters.push_back(tmp);
+  }
+  println("{}", maxlet);
 }
 
 int32_t main(){
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
-    // tc{ solve(); }
-    solve();
+    tc{ solve(); }
+    // solve();
 }

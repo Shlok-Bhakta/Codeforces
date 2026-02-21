@@ -23,7 +23,7 @@
   {
     "id": "2192A-cpp",
     "name": "2192A",
-    "addedAt": 1771684552742,
+    "addedAt": 1771684588124,
     "metadata": {
       "title": "2192A",
       "cpuLimit": "?",
@@ -35,7 +35,7 @@
       "index": "A",
       "isGym": false
     },
-    "timeSpentMs": 5558.3735349999915,
+    "timeSpentMs": 1481073.646146,
     "solved": false
   }
 ]
