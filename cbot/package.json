@@ -1,0 +1,23 @@
+{
+  "name": "cbot",
+  "module": "src/index.tsx",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch src/index.tsx",
+    "migrate": "bun run scripts/migrate-time-tracking.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.1.72",
+    "@opentui/react": "^0.1.72",
+    "fuse.js": "^7.1.0",
+    "jszip": "^3.10.1",
+    "react": "^19.2.3"
+  }
+}

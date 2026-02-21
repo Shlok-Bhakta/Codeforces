@@ -1,0 +1,23 @@
+[
+  {
+    "id": "2195A-cpp",
+    "name": "Sieve of Erato67henes",
+    "addedAt": 1771517526232,
+    "metadata": {
+      "title": "Sieve of Erato67henes",
+      "cpuLimit": "1s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n1 second\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nYou are given $$$n$$$ positive integers $$$a_1,a_2,\\ldots,a_n$$$.\nPlease determine if it is possible to select any number of elements in $$$a$$$, so that their product is $$$67$$$.\nNote that you may not select zero elements, as the product of zero elements is not defined in this problem.\n\nInput\nEach test contains multiple test cases. The first line contains the number of test cases $$$t$$$ ($$$1 \\le t \\le 10^4$$$). The description of the test cases follows. \nThe first line of each test case contains a single integer $$$n$$$ ($$$1 \\le n \\le 5$$$).\nThe second line of each test case contains $$$n$$$ positive integers $$$a_1,a_2,\\ldots,a_n$$$ ($$$1 \\le a_i \\le 67$$$).\n\nOutput\nIf it is possible to select elements so that their product is $$$67$$$, output \"YES\" on one line. Otherwise, output \"NO\" on one line.\nYou can output the answer in any case. For example, the strings \"yEs\", \"yes\", and \"Yes\" will also be recognized as positive responses.",
+      "tags": [
+        "math",
+        "number theory"
+      ],
+      "contestId": 2195,
+      "index": "A",
+      "isGym": false
+    },
+    "timeSpentMs": 1036537.842845,
+    "solved": false
+  }
+]

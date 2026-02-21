@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.o
+solution
+solution.exe
+.DS_Store
