@@ -37,5 +37,23 @@
     },
     "timeSpentMs": 1481073.646146,
     "solved": false
+  },
+  {
+    "id": "2192B-cpp",
+    "name": "2192B",
+    "addedAt": 1771685743725,
+    "metadata": {
+      "title": "2192B",
+      "cpuLimit": "?",
+      "memoryLimit": "?",
+      "difficulty": "?",
+      "description": "",
+      "tags": [],
+      "contestId": 2192,
+      "index": "B",
+      "isGym": false
+    },
+    "timeSpentMs": 1752996.9806499998,
+    "solved": false
   }
 ]
