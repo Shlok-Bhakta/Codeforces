@@ -1,4 +1,5 @@
 import { join, dirname } from "path";
+import { stat } from "fs/promises";
 
 export interface TestResult {
   name: string;
@@ -11,43 +12,77 @@ export interface TestResult {
   debug?: string;  // Add debug output field
 }
 
+const FAST_COMPILER = "clang++";
+const FAST_PCH_FILE = "cbot-prelude.debug.pch";
+const EXEC_TIMEOUT_MS = 10_000;
+const STDERR_TAIL_LINES = 100;
+
+function formatTleStderr(text: string, maxLines: number): string {
+  const lines = text.split(/\r?\n/);
+  const end = lines[lines.length - 1] === "" ? lines.length - 1 : lines.length;
+  const cleanLines = lines.slice(0, end);
+
+  if (cleanLines.length <= maxLines) {
+    return cleanLines.join("\n");
+  }
+
+  return ["..", ...cleanLines.slice(cleanLines.length - maxLines)].join("\n");
+}
+
 async function compileCpp(
   solutionFile: string,
   binPath: string
 ): Promise<{ success: boolean; error?: string }> {
-  const dir = dirname(solutionFile);
-  const objPath = binPath + ".o";
-  
-  // Compile to object file (ccache-able) with LOCAL_DEBUG flag and cpp-dump include
-  // Find the project root by going up from this file's location
   const projectRoot = join(import.meta.dir, "../..");
   const cppDumpInclude = join(projectRoot, "cpp-dump-lib");
-  const compile = Bun.spawn([
-    "g++", "-O2", "-std=c++23", "-pipe", 
-    "-DLOCAL_DEBUG",  // Define LOCAL_DEBUG for debug output
-    `-I${cppDumpInclude}`,  // Include cpp-dump library
-    "-c", "-o", objPath, solutionFile
-  ], {
-    stdout: "pipe",
-    stderr: "pipe",
-  });
-  const compileErr = await new Response(compile.stderr).text();
-  await compile.exited;
+  const cacheDir = join(projectRoot, ".cbot-cache");
+  const pchPath = join(cacheDir, FAST_PCH_FILE);
+  const gccLibDir = process.env.CBOT_GCC_LIB_DIR?.trim();
 
-  if (compile.exitCode !== 0) {
-    return { success: false, error: compileErr };
+  if (!gccLibDir) {
+    return {
+      success: false,
+      error:
+        "C++ builds require CBOT_GCC_LIB_DIR (directory containing libstdc++.so for the linker rpath).",
+    };
   }
-  
-  // Link the object file
-  const link = Bun.spawn(["g++", objPath, "-o", binPath], {
-    stdout: "pipe",
-    stderr: "pipe",
-  });
-  const linkErr = await new Response(link.stderr).text();
-  await link.exited;
-  
-  if (link.exitCode !== 0) {
-    return { success: false, error: linkErr };
+
+  try {
+    await stat(pchPath);
+  } catch {
+    return {
+      success: false,
+      error:
+        `Missing ${pchPath}. Generate it once with: ` +
+        `clang++ -std=c++23 -DLOCAL_DEBUG -I${cppDumpInclude} -x c++-header ${join(cacheDir, "cbot-prelude.hpp")} -o ${pchPath}`,
+    };
+  }
+
+  const compileAndLink = Bun.spawn(
+    [
+      FAST_COMPILER,
+      "-std=c++23",
+      "-DLOCAL_DEBUG",
+      "-pipe",
+      `-I${cppDumpInclude}`,
+      "-fuse-ld=mold",
+      `-Wl,-rpath,${gccLibDir}`,
+      "-include-pch",
+      pchPath,
+      solutionFile,
+      "-o",
+      binPath,
+    ],
+    {
+      stdout: "pipe",
+      stderr: "pipe",
+    }
+  );
+  const buildErr = await new Response(compileAndLink.stderr).text();
+  await compileAndLink.exited;
+
+  if (compileAndLink.exitCode !== 0) {
+    return { success: false, error: buildErr };
   }
 
   return { success: true };
@@ -74,17 +109,35 @@ async function runSingleTest(
       stderr: "pipe",
     });
 
-    const [stdout, stderr] = await Promise.all([
-      new Response(proc.stdout).text(),
-      new Response(proc.stderr).text(),
-    ]);
-    await proc.exited;
+    const stdoutPromise = new Response(proc.stdout).text();
+    const stderrPromise = new Response(proc.stderr).text();
+    let timedOut = false;
 
-    if (proc.exitCode !== 0) {
-      error = stderr || `Exit code: ${proc.exitCode}`;
+    const timeoutId = setTimeout(() => {
+      timedOut = true;
+      proc.kill("SIGKILL");
+    }, EXEC_TIMEOUT_MS);
+
+    await proc.exited;
+    clearTimeout(timeoutId);
+
+    const [stdout, stderr] = await Promise.all([
+      stdoutPromise.catch(() => ""),
+      stderrPromise.catch(() => ""),
+    ]);
+
+    const fullStderr = stderr.trim();
+    const tleStderr = formatTleStderr(stderr, STDERR_TAIL_LINES).trim();
+
+    if (timedOut) {
+      error = tleStderr
+        ? `TLE (${EXEC_TIMEOUT_MS / 1000}s limit)\n${tleStderr}`
+        : `TLE (${EXEC_TIMEOUT_MS / 1000}s limit)`;
+    } else if (proc.exitCode !== 0) {
+      error = fullStderr || `Exit code: ${proc.exitCode}`;
     }
     actual = stdout.trim();
-    debug = stderr.trim();  // Capture debug output from stderr
+    debug = timedOut ? tleStderr : fullStderr;
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
   }
@@ -98,7 +151,7 @@ async function runSingleTest(
     input,
     error,
     time: performance.now() - startTime,
-    debug: debug || undefined,  // Include debug output
+    debug: debug || undefined,
   };
 }
 
@@ -114,6 +167,7 @@ async function runPythonTest(
 
   let actual = "";
   let error: string | undefined;
+  let debug = "";
 
   try {
     const proc = Bun.spawn(["python3", solutionFile], {
@@ -122,16 +176,35 @@ async function runPythonTest(
       stderr: "pipe",
     });
 
-    const [stdout, stderr] = await Promise.all([
-      new Response(proc.stdout).text(),
-      new Response(proc.stderr).text(),
-    ]);
-    await proc.exited;
+    const stdoutPromise = new Response(proc.stdout).text();
+    const stderrPromise = new Response(proc.stderr).text();
+    let timedOut = false;
 
-    if (proc.exitCode !== 0) {
-      error = stderr || `Exit code: ${proc.exitCode}`;
+    const timeoutId = setTimeout(() => {
+      timedOut = true;
+      proc.kill("SIGKILL");
+    }, EXEC_TIMEOUT_MS);
+
+    await proc.exited;
+    clearTimeout(timeoutId);
+
+    const [stdout, stderr] = await Promise.all([
+      stdoutPromise.catch(() => ""),
+      stderrPromise.catch(() => ""),
+    ]);
+
+    const fullStderr = stderr.trim();
+    const tleStderr = formatTleStderr(stderr, STDERR_TAIL_LINES).trim();
+
+    if (timedOut) {
+      error = tleStderr
+        ? `TLE (${EXEC_TIMEOUT_MS / 1000}s limit)\n${tleStderr}`
+        : `TLE (${EXEC_TIMEOUT_MS / 1000}s limit)`;
+    } else if (proc.exitCode !== 0) {
+      error = fullStderr || `Exit code: ${proc.exitCode}`;
     }
     actual = stdout.trim();
+    debug = timedOut ? tleStderr : fullStderr;
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
   }
@@ -145,6 +218,7 @@ async function runPythonTest(
     input,
     error,
     time: performance.now() - startTime,
+    debug: debug || undefined,
   };
 }
 
@@ -215,5 +289,9 @@ export async function runTest(
   const results = await runAllTests(solutionFile, [
     { name, inFile, ansFile },
   ]);
-  return results[0];
+  const result = results[0];
+  if (!result) {
+    throw new Error("No test result was produced");
+  }
+  return result;
 }

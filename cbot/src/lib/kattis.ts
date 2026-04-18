@@ -38,7 +38,7 @@ async function login(config: KattisConfig): Promise<LoginResult> {
     method: "POST",
     body: formData,
     headers: {
-      "User-Agent": "kbot-cli",
+      "User-Agent": "cbot-cli",
       "Content-Type": "application/x-www-form-urlencoded",
     },
     redirect: "manual",
@@ -73,7 +73,7 @@ async function getSubmissionStatus(
 ): Promise<SubmissionStatus> {
   const response = await fetch(`${submissionUrl}?json`, {
     headers: {
-      "User-Agent": "kbot-cli",
+      "User-Agent": "cbot-cli",
       Cookie: cookies,
     },
   });
@@ -132,7 +132,7 @@ export async function submitSolution(
     method: "POST",
     body: formData,
     headers: {
-      "User-Agent": "kbot-cli",
+      "User-Agent": "cbot-cli",
       Cookie: cookies,
     },
   });

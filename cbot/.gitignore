@@ -1,6 +1,7 @@
 node_modules/
 dist/
 *.o
+.cbot-cache/*.pch
 solution
 solution.exe
 .DS_Store
