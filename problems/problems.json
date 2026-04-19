@@ -155,5 +155,30 @@
     },
     "timeSpentMs": 1524313.092116999,
     "solved": false
+  },
+  {
+    "id": "687333K-cpp",
+    "name": "Kitties",
+    "addedAt": 1776623538780,
+    "metadata": {
+      "title": "Kitties",
+      "cpuLimit": "1s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n1 second\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nWhile traversing through the jungle, Steve comes across some ocelots! They're amazing pets and very cute, so he stops to tame them before going to the stronghold. \nSteve has constructed a map showing where all the fish and ocelots in the jungle are. This map is given to you as a string of length $$$N$$$ consisting of the characters 'F', indicating a fish, and 'O', indicating an ocelot. \nSteve starts at index $$$1$$$. Each day, he may move to an adjacent index, while remaining within the bounds of the string. Formally, if Steve is currently at index $$$i$$$, then in one day he may move to an index $$$j$$$ such that $$$ |i - j| = 1$$$ and $$$1 \\le j \\le N.$$$ Steve is allowed to revisit indices any number of times.\nIf Steve is at the same index as a fish, then Steve can add one fish to his inventory, removing the fish from the map. If Steve is at the same index as an ocelot and has at least one fish in his inventory, he can use one fish from his inventory to tame the ocelot (consuming the fish) and removing the ocelot from the map. Steve cannot obtain multiple fish from one 'F' index, nor can he tame multiple ocelots from one 'O' index. \nGiven that Steve starts at index $$$1$$$ with no fish in his inventory, help him figure out the minimum number of days it will take to tame all of the ocelots and return to index $$$1$$$, or report that it's impossible.\n\nInput\nThe first line contains a single integer $$$N$$$ ($$$1 \\le N \\le 2 \\cdot 10^5$$$), the length of the string.\nThe second line contains a string $$$S$$$ of length $$$N$$$, consisting only of characters 'F' and 'O'.\n\nOutput\nPrint the minimum number of days Steve needs to tame all ocelots and return home, or $$$-1$$$ if it is impossible.",
+      "tags": [],
+      "contestId": 687333,
+      "index": "K",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "cfRef": {
+      "contestId": 687333,
+      "index": "K",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "timeSpentMs": 88818.04284199979,
+    "solved": false
   }
 ]
