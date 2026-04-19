@@ -228,7 +228,32 @@
       "isGym": false,
       "groupCode": "EW9LgKVDr6"
     },
-    "timeSpentMs": 779231.0104640005,
+    "timeSpentMs": 2277163.777810001,
+    "solved": false
+  },
+  {
+    "id": "687333G-py",
+    "name": "Greedy Piglins",
+    "addedAt": 1776631439067,
+    "metadata": {
+      "title": "Greedy Piglins",
+      "cpuLimit": "1s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n1 second\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nA caravan of piglins clatters through the Nether, hauling chests and sacks stuffed with all sorts of treasure. As Steve watches the commotion, he spots a few precious ender pearls being traded from piglin to piglin. \nSteve has run into a group of $$$N$$$ piglins with a rather unusual system for trading. The $$$N$$$ piglins form a line, starting from piglin $$$1$$$ and ending with piglin $$$N$$$. A trade performed with the $$$i$$$th piglin requires $$$T_i$$$ seconds and has probability $$$P_i$$$ of succeeding. If you are at piglin $$$i$$$ and the trade succeeds, then you should move to piglin $$$i + 1$$$. If the trade fails, then you instead move backwards to piglin $$$F_i$$$ where $$$F_i \\leq i$$$.\nAccording to ancient custom, Steve must start trading with piglin $$$1$$$ and cannot stop until he's made a successful trade with piglin $$$N$$$. Steve wonders what is the expected amount of seconds he will be stuck trading. \nIt can be shown that the expected number of seconds can be represented as an irreducible fraction $$$\\frac{a}{b}$$$ where $$$b \\not \\equiv 0 \\pmod{10^9 + 7}$$$. Output the value $$$a \\cdot b^{-1} \\pmod{10^9 + 7}$$$ where $$$b^{-1}$$$ denotes the modular inverse of $$$b$$$ modulo $$$10^9 + 7$$$. \n\nInput\nThe first line contains a single integer $$$N$$$ $$$(1 \\le N \\le 10^5)$$$.\nThe next $$$N$$$ lines describe the piglins. The $$$i$$$th of these lines contains three integers $$$T_i$$$, $$$Q_i$$$, and $$$F_i$$$ $$$(1 \\le T_i \\le 10^9,\\ 1 \\le Q_i \\le 100,\\ 1 \\le F_i \\le i)$$$, where:\n$$$T_i$$$ is the number of seconds required to trade with piglin $$$i$$$, $$$Q_i$$$ is the success probability of trading with piglin $$$i$$$ expressed as a percentage, so the true probability $$$P_i$$$ is $$$\\frac{Q_i}{100}$$$, $$$F_i$$$ is the piglin you move to if the trade with piglin $$$i$$$ fails. \nOutput\nPrint a single integer, the expected number of seconds required to make a successful trade with piglin $$$N$$$, assuming you start at piglin $$$1$$$, modulo $$$10^9+7$$$.",
+      "tags": [],
+      "contestId": 687333,
+      "index": "G",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "cfRef": {
+      "contestId": 687333,
+      "index": "G",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "timeSpentMs": 3179100.179912001,
     "solved": false
   }
 ]

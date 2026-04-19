@@ -1,0 +1,23 @@
+# 687333G
+from fractions import Fraction
+l = int(input())
+print(l)
+pigs: list[list[int]] = []
+pigs.append([0, 100, 0])
+for i in range(l):
+    a, b, c = [int(a) for a in input().split(" ")]
+    # print(a, b, c)
+    pigs.append([a, b, c])
+print(pigs)
+prefixsum: list[Fraction] = [Fraction()] * (l+1)
+for i in range(1, l+1):
+    attempts: Fraction = Fraction(100,pigs[i][1])
+    prefix = prefixsum[pigs[i][2]-1]
+    loop_sum = prefixsum[i-1] - prefixsum[pigs[i][2]-1] + pigs[i][0]
+    print(prefixsum)
+    print(prefix, loop_sum, attempts, pigs[i])
+    prefixsum[i] = prefix + loop_sum * attempts
+print(prefixsum)
+
+inv = pow(prefixsum[-1].denominator, -1, (10*9)+7)
+print(prefixsum[-1].numerator * inv)
