@@ -180,5 +180,30 @@
     },
     "timeSpentMs": 1528736.9503999995,
     "solved": false
+  },
+  {
+    "id": "687333E-py",
+    "name": "Exploding Houses",
+    "addedAt": 1776625236520,
+    "metadata": {
+      "title": "Exploding Houses",
+      "cpuLimit": "1s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n1 second\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nAfter finding the village, he realizes that all the villager houses are already looted by his friends! In a fit of anger, Steve resolves to destroy all his friends' houses, and places TNT right beneath every single one.\nSteve has place $$$N$$$ blocks of TNT numbered from $$$1$$$ to $$$N$$$. He has also written down a list of $$$M$$$ pairs indicating which TNT blocks are adjacent. \nA TNT block may be manually ignited at any integer time $$$t$$$. If a TNT block is ignited at time $$$t$$$, then it explodes at time $$$t+1$$$. When a TNT block explodes, every TNT block adjacent to it becomes ignited at the time of the explosion. Once a TNT block has exploded, it cannot be ignited or used again.\nUnfortunately, Steve's TNT is unstable. If two adjacent TNT blocks explode at the same time, the server will crash. In other words, for every pair of adjacent TNT blocks, their explosion times must be different.\nHelp Steve figure out the minimum number of manual ignitions required to blow up all $$$N$$$ TNT blocks without a server crash, or tell him that it is impossible to do so. \n\nInput\nThe first line will contain two integers $$$N, M$$$, $$$(1 \\leq N \\leq 10^5)$$$, $$$(0 \\leq M \\leq 10^5)$$$, denoting the number of TNT and the number of adjacent TNT pairs respectively. \nThe following $$$M$$$ lines will each contain two integers $$$(i, j)$$$ $$$(1 \\leq i, j \\leq N)$$$, indicating that TNT $$$i$$$ is adjacent to TNT $$$j$$$. \n\nOutput\nOutput the minimum number of manual ignitions to blow up all TNT blocks without a server crash, or $$$0$$$ if it is impossible to do so.",
+      "tags": [],
+      "contestId": 687333,
+      "index": "E",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "cfRef": {
+      "contestId": 687333,
+      "index": "E",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "timeSpentMs": 10313.618099001236,
+    "solved": false
   }
 ]
