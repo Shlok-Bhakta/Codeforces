@@ -105,5 +105,55 @@
     },
     "timeSpentMs": 1299005.682171,
     "solved": false
+  },
+  {
+    "id": "517960F-cpp",
+    "name": "Floor Plan",
+    "addedAt": 1776571517542,
+    "metadata": {
+      "title": "Floor Plan",
+      "cpuLimit": "30s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n2 seconds\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nThe ideal team strategy is to have one person coding, one person thinking about other problems, and one person walking around the competition room to look at other teams' computers and gather intel. You are planning the perfect way for your teammate to walk around the room for said intel, but are missing a key piece of information: the dimensions of the room!\nLet the room be represented by a $$$N$$$x$$$M$$$ grid, where $$$N$$$ and $$$M$$$ are unknown. In this room, there exist empty spaces '.' and tables 'T'. Your goal is to determine all possible values for $$$N$$$ and $$$M$$$.\nTo do this, you will use two details you've gathered about the room:\n(1) No two tables will touch, even diagonally.\n(2) You found a document which contains the row-major traversal of the room, represented as a string of '.' and 'T'.\nSo, given the row-major traversal, can you find all possible values for $$$N$$$ and $$$M$$$?\n\nInput\nThe first line contains one string of length $$$N * M$$$ ($$$1 \\le N * M \\le 10^5$$$); the row-major traversal of the room.\n\nOutput\nBegin the output with one integer $$$X$$$: the number of potential dimensions for the room.\nThen, for the next $$$X$$$ lines, output a potential dimension of the room, in the form \"$$$N$$$x$$$M$$$\". Here, $$$N$$$ is the number of rows and $$$M$$$ is the number of columns.\nYou may output the possible room dimensions in any order.",
+      "tags": [],
+      "contestId": 517960,
+      "index": "F",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "cfRef": {
+      "contestId": 517960,
+      "index": "F",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "timeSpentMs": 6.787535999901593,
+    "solved": false
+  },
+  {
+    "id": "687333C-cpp",
+    "name": "Challenging Encounter",
+    "addedAt": 1776621927937,
+    "metadata": {
+      "title": "Challenging Encounter",
+      "cpuLimit": "1s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n1 second\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nSteve was so busy reorganizing his inventory that he never got around to building shelter! As the first day draws to a close, a pack of zombies lurches towards him from the shadows. \nSteve has $$$X$$$ health and is fighting $$$N$$$ zombies, each having $$$A$$$ health. When he hits a zombie, he deals $$$Y$$$ damage to the zombie reducing its health by $$$Y$$$, and the zombie hits back for $$$B$$$ damage reducing Steve's health by $$$B$$$. \nIf when attacking a zombie its health drops to $$$0$$$ or below, it does not hit back and instead drops a rotten flesh that Steve can choose to consume immediately to gain $$$Z$$$ health. If Steve's health drops to $$$0$$$ or below, then he dies. \nSteve's health is capped to $$$X$$$. If his health is currently $$$x$$$ and he consumes a rotten flesh, his health will become $$$\\text{min}(X, x + Z)$$$. Also note that he cannot wait to consume a rotten flesh; he must consume it immediately after killing a zombie or not at all. \nIs it possible for Steve to kill all the zombies and survive the night?\n\nInput\nThe first and only line will contain six integers $$$N$$$, $$$A$$$, $$$B$$$, $$$X$$$, $$$Y$$$, and $$$Z$$$ $$$(1 \\le N, A, B, X, Y, Z \\le 10^9)$$$, where:\n$$$N$$$ is the number of zombies, $$$A$$$ is the health of each zombie, $$$B$$$ is the damage a zombie deals back each time Steve hits it and the zombie survives, $$$X$$$ is Steve's maximum and starting health, $$$Y$$$ is the damage Steve deals with each hit, $$$Z$$$ is the amount of health Steve recovers by consuming a rotten flesh. \nOutput\nFor each test case, print YES if it is possible for Steve to kill all $$$N$$$ zombies and survive, and NO otherwise.\nYou may print each letter in any case. For example, yes, Yes, and YES will all be accepted.",
+      "tags": [],
+      "contestId": 687333,
+      "index": "C",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "cfRef": {
+      "contestId": 687333,
+      "index": "C",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "timeSpentMs": 10878.498671999667,
+    "solved": false
   }
 ]
