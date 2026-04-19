@@ -58,6 +58,51 @@ const int INF  = 2e18;
 const int MOD  = 1e9+7;
 
 void solve(){
+  int spots;
+  cin >> spots;
+  string s;
+  cin >> s;
+  int fish = 0;
+  int oce = 0;
+  int steps = 0;
+  int lastoce = -1;
+  rep(i, spots){
+
+    if(s[i] == 'O'){
+      lastoce = i;
+
+    }
+  }
+  cpp_dump(lastoce);
+  rep(i, spots){
+    if(s[i] == 'F'){
+      fish++;
+    }
+    if(s[i] == 'O'){
+      if(fish > 0){
+        fish--;
+      }else{
+        oce++;
+      }
+    }
+    if(i >= lastoce){
+      // make a choice to continue to more fish or go back
+      cpp_dump(fish, oce, lastoce, steps);
+      if(fish >= oce){
+        cpp_dump("enough");
+        steps+= i;
+        cout << steps << nl;
+        return;
+      }
+    }
+    steps++;
+    cpp_dump(fish, oce, steps);
+  }
+  // we made it to the end now we need to go back if we have enough
+  if(fish < oce){
+    cout << -1 << nl;
+    return;
+  }
 
 }
 
