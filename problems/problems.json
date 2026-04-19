@@ -59,7 +59,7 @@
   {
     "id": "517960G-cpp",
     "name": "Glasses Off",
-    "addedAt": 1776562948787,
+    "addedAt": 1776563591534,
     "metadata": {
       "title": "Glasses Off",
       "cpuLimit": "30s",
@@ -78,7 +78,7 @@
       "isGym": false,
       "groupCode": "EW9LgKVDr6"
     },
-    "timeSpentMs": 604022.616466,
+    "timeSpentMs": 613555.330692,
     "solved": false
   }
 ]

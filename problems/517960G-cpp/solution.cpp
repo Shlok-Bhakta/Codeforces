@@ -62,7 +62,17 @@ void solve(){
   cin >> n;
   vi shirtfreq;
   readv(shirtfreq, n);
+  sort(all(shirtfreq));
   cpp_dump(n, shirtfreq);
+  int counter = 0;
+  rep(i, sz(shirtfreq)){
+    if(shirtfreq[i] >= (shirtfreq.back()-1)){
+      break;
+    }
+    counter += shirtfreq.back() - shirtfreq[i] - 1;
+  }
+  cpp_dump(counter);
+  cout << counter << nl;
 }
 
 int32_t main(){
