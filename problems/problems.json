@@ -55,5 +55,30 @@
     },
     "timeSpentMs": 5964239.505779,
     "solved": false
+  },
+  {
+    "id": "517960G-cpp",
+    "name": "Glasses Off",
+    "addedAt": 1776562948787,
+    "metadata": {
+      "title": "Glasses Off",
+      "cpuLimit": "30s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n8 seconds\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nToday's contest is a team contest! But why limit yourself to groups of three? Well, for starters, if you were seen with more than three people in your group, you would be disqualified from the contest! So, you have two choices: either work in groups of three, or make it so Mark, the ACPC officer in the room, can't see you break this rule.\nYou've chosen the latter, and through a clever plan, have stolen Mark's glasses! Now, for Mark, everything will be a blur! With Mark's eyesight nerfed, all that's left is to make sure that you and your teammates don't stand out.\nNotably, the visually-impaired Mark will be able to pick out the colors of each contest participant's shirts, and will pay attention to the color(s) that appear most frequently in the contest room. As a result, if you or any of your friends wear a shirt that is the same color as any of the most frequently appearing colors, then you risk getting noticed!\nYou're at Kohl's now and are ready to buy the shirts needed. There are $$$N$$$ colors, and you know how many participants in the contest room are wearing each color. Given this information, how many people (including you) can you sneak into the contest without getting caught?\n\nInput\nThe first line contains $$$N$$$ ($$$1 \\le N \\le 10^5$$$), the number of different shirt colors offered by Kohl's.\nThe next line contains N space-separated integers $$$x_i$$$ ($$$0 \\le x_i \\le 1000$$$), denoting the number of people in the contest room wearing the $$$i^{th}$$$ color.\n\nOutput\nOutput one integer: the maximum number of people you can sneak into the contest room without getting noticed.",
+      "tags": [],
+      "contestId": 517960,
+      "index": "G",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "cfRef": {
+      "contestId": 517960,
+      "index": "G",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "timeSpentMs": 604022.616466,
+    "solved": false
   }
 ]
