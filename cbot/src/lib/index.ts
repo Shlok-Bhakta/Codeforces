@@ -14,6 +14,7 @@ export {
   refreshProblemMetadata,
   getLanguageFromId,
   getCfRefFromId,
+  resolveCfProblemRef,
   parseCfInput,
   createCustomTestCase,
   deleteTestCase,

@@ -9,6 +9,18 @@ export interface CodeforcesConfig {
   cookie39ce7?: string;
 }
 
+function normalizeEnvValue(value: string): string {
+  const trimmed = value.trim();
+  if (
+    trimmed.length >= 2 &&
+    ((trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+      (trimmed.startsWith("'") && trimmed.endsWith("'")))
+  ) {
+    return trimmed.slice(1, -1).trim();
+  }
+  return trimmed;
+}
+
 function loadEnv(): Record<string, string> {
   const envPaths = [
     join(import.meta.dir, "../../../.env"),
@@ -29,7 +41,7 @@ function loadEnv(): Record<string, string> {
           const eqIdx = trimmed.indexOf("=");
           if (eqIdx === -1) continue;
           const key = trimmed.slice(0, eqIdx).trim();
-          const value = trimmed.slice(eqIdx + 1).trim();
+          const value = normalizeEnvValue(trimmed.slice(eqIdx + 1));
           env[key] = value;
         }
         break;
@@ -60,7 +72,7 @@ async function loadEnvAsync(): Promise<Record<string, string>> {
         const eqIdx = trimmed.indexOf("=");
         if (eqIdx === -1) continue;
         const key = trimmed.slice(0, eqIdx).trim();
-        const value = trimmed.slice(eqIdx + 1).trim();
+        const value = normalizeEnvValue(trimmed.slice(eqIdx + 1));
         if (value) env[key] = value;
       }
       break;

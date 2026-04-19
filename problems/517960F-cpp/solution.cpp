@@ -1,5 +1,4 @@
-// 687333D
-#include <numeric>
+// 517960F
 #ifdef LOCAL_DEBUG
 #include <cpp-dump.hpp>
 namespace cp = cpp_dump;
@@ -57,42 +56,6 @@ inline int idx(const vector<T>& v,int i){return i<0?(int)v.size()+i:i;}
 
 const int INF  = 2e18;
 const int MOD  = 1e9+7;
-long long countWithDigitSum(long long start, long long end) {
-    string num = to_string(end);
-    int len = num.length();
-    
-    // memo[pos][tight][sum] = count
-    vector<vector<vector<long long>>> memo(len + 1, 
-                                         vector<vector<long long>>(2, 
-                                                                 vector<long long>(end-start + 1, -1)));
-    
-    function<long long(int, bool, int)> dp = 
-        [&](int pos, bool tight, int sum) -> long long {
-        
-        // Base case
-        if (pos == len) {
-            return (sum == k) ? 1 : 0;
-        }
-        
-        // Return memoized result if available
-        if (memo[pos][tight][sum] != -1) return memo[pos][tight][sum];
-        
-        long long result = 0;
-        int limit = tight ? (num[pos] - '0') : 9;
-        
-        for (int digit = 0; digit <= limit; digit++) {
-            // Skip if sum would exceed k
-            if (s) continue;
-            
-            bool nextTight = tight && (digit == (num[pos] - '0'));
-            result += dp(pos + 1, nextTight, sum + digit);
-        }
-        
-        return memo[pos][tight][sum] = result;
-    };
-    
-    return dp(0, true, 0);
-}
 
 void solve(){
 

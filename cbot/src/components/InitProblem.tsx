@@ -50,7 +50,7 @@ export function InitProblem({ onDone, onCancel }: InitProblemProps) {
         <text fg={theme.text} attributes={TextAttributes.BOLD}>PROBLEM URL OR ID</text>
         <input
           focused
-          placeholder="1A or https://codeforces.com/contest/1/problem/A"
+          placeholder="1A or a Codeforces problem URL"
           value={input}
           onInput={setInput}
           onSubmit={handleSubmit}

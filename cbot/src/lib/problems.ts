@@ -1,6 +1,6 @@
 import { join } from "path";
 import { appendFileSync } from "fs";
-import { loadCodeforcesConfig, buildCfApiUrl } from "./config";
+import { loadCodeforcesConfig } from "./config";
 
 const PROBLEMS_DIR = join(import.meta.dir, "../../../problems");
 const PROBLEMS_JSON = join(PROBLEMS_DIR, "problems.json");
@@ -10,8 +10,39 @@ const USER_AGENT =
   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
 /** Fetch a URL via curl subprocess to bypass Cloudflare TLS fingerprinting. */
+async function getSessionCookieHeader(): Promise<string | null> {
+  try {
+    const config = await loadCodeforcesConfig();
+    if (config.jsessionid && config.cookie39ce7) {
+      return `JSESSIONID=${config.jsessionid}; 39ce7=${config.cookie39ce7}`;
+    }
+  } catch {
+    // ignore missing config and fall back to anonymous requests
+  }
+  return null;
+}
+
 async function curlFetch(url: string): Promise<{ ok: boolean; status: number; text: () => Promise<string>; json: () => Promise<unknown> }> {
-  const result = await Bun.$`curl -s -L -w "\n__STATUS__%{http_code}" -A ${USER_AGENT} ${url}`.quiet().text();
+  const args = [
+    "curl",
+    "-s",
+    "-L",
+    "-w",
+    "\n__STATUS__%{http_code}",
+    "-A",
+    USER_AGENT,
+  ];
+  const cookieHeader = await getSessionCookieHeader();
+  if (cookieHeader) {
+    args.push("-H", `Cookie: ${cookieHeader}`);
+  }
+  args.push(url);
+
+  const proc = Bun.spawn(args, {
+    stdout: "pipe",
+    stderr: "ignore",
+  });
+  const result = await new Response(proc.stdout).text();
   const statusMatch = result.match(/\n__STATUS__(\d+)$/);
   const status = statusMatch ? parseInt(statusMatch[1]!, 10) : 0;
   const body = statusMatch ? result.slice(0, result.lastIndexOf("\n__STATUS__")) : result;
@@ -42,6 +73,7 @@ export interface ProblemMetadata {
   contestId?: number;
   index?: string;
   isGym?: boolean;
+  groupCode?: string;
 }
 
 export interface Problem {
@@ -49,6 +81,7 @@ export interface Problem {
   name: string;
   addedAt: number;
   metadata?: ProblemMetadata;
+  cfRef?: CfProblemRef;
   timeSpentMs?: number;
   solved?: boolean;
   solvedAt?: number;
@@ -59,6 +92,18 @@ export interface CfProblemRef {
   contestId: number;
   index: string;
   isGym: boolean;
+  groupCode?: string;
+}
+
+function getInternalId(
+  ref: CfProblemRef,
+  language: "python" | "cpp"
+): string {
+  const suffix = language === "python" ? "py" : "cpp";
+  if (ref.isGym) {
+    return `gym${ref.contestId}${ref.index}-${suffix}`;
+  }
+  return `${ref.contestId}${ref.index}-${suffix}`;
 }
 
 export function getLanguageFromId(id: string): "python" | "cpp" {
@@ -142,6 +187,7 @@ export async function getProblemDir(id: string): Promise<string> {
  * Parse a CF problem URL or short form into a CfProblemRef + language.
  * Accepted formats:
  *   https://codeforces.com/contest/1/problem/A
+ *   https://codeforces.com/group/abc123/contest/1/problem/A
  *   https://codeforces.com/problemset/problem/1/A
  *   https://codeforces.com/gym/100001/problem/A
  *   1/A   or   1A   (contestId + index)
@@ -152,8 +198,22 @@ export function parseCfInput(
 ): { ref: CfProblemRef; internalId: string } | null {
   const s = input.trim();
 
-  // Gym URL
+  // Group contest URL
   let m = s.match(
+    /https?:\/\/codeforces\.com\/group\/([^/]+)\/contest\/(\d+)\/problem\/([A-Z][1-9]?)/i
+  );
+  if (m) {
+    const ref: CfProblemRef = {
+      contestId: parseInt(m[2]!, 10),
+      index: m[3]!.toUpperCase(),
+      isGym: false,
+      groupCode: m[1]!,
+    };
+    return { ref, internalId: getInternalId(ref, language) };
+  }
+
+  // Gym URL
+  m = s.match(
     /https?:\/\/codeforces\.com\/gym\/(\d+)\/problem\/([A-Z][1-9]?)/i
   );
   if (m) {
@@ -162,8 +222,7 @@ export function parseCfInput(
       index: m[2]!.toUpperCase(),
       isGym: true,
     };
-    const suffix = language === "python" ? "py" : "cpp";
-    return { ref, internalId: `gym${ref.contestId}${ref.index}-${suffix}` };
+    return { ref, internalId: getInternalId(ref, language) };
   }
 
   // Contest or problemset URL
@@ -176,8 +235,7 @@ export function parseCfInput(
       index: m[2]!.toUpperCase(),
       isGym: false,
     };
-    const suffix = language === "python" ? "py" : "cpp";
-    return { ref, internalId: `${ref.contestId}${ref.index}-${suffix}` };
+    return { ref, internalId: getInternalId(ref, language) };
   }
 
   // Short form: "1/A" or "1A" or "1 A"
@@ -188,8 +246,7 @@ export function parseCfInput(
       index: m[2]!.toUpperCase(),
       isGym: false,
     };
-    const suffix = language === "python" ? "py" : "cpp";
-    return { ref, internalId: `${ref.contestId}${ref.index}-${suffix}` };
+    return { ref, internalId: getInternalId(ref, language) };
   }
 
   m = s.match(/^(\d+)([A-Z][1-9]?)$/i);
@@ -199,14 +256,16 @@ export function parseCfInput(
       index: m[2]!.toUpperCase(),
       isGym: false,
     };
-    const suffix = language === "python" ? "py" : "cpp";
-    return { ref, internalId: `${ref.contestId}${ref.index}-${suffix}` };
+    return { ref, internalId: getInternalId(ref, language) };
   }
 
   return null;
 }
 
 function cfProblemUrl(ref: CfProblemRef): string {
+  if (ref.groupCode) {
+    return `https://codeforces.com/group/${ref.groupCode}/contest/${ref.contestId}/problem/${ref.index}`;
+  }
   if (ref.isGym) {
     return `https://codeforces.com/gym/${ref.contestId}/problem/${ref.index}`;
   }
@@ -383,6 +442,7 @@ export async function fetchProblemMetadata(
     contestId: ref.contestId,
     index: ref.index,
     isGym: ref.isGym,
+    groupCode: ref.groupCode,
   };
 }
 
@@ -397,7 +457,7 @@ export async function initProblem(
   if (!parsed) {
     throw new Error(
       `Could not parse problem: "${input}"\n` +
-      `Try formats like: 1A, 1/A, https://codeforces.com/contest/1/problem/A`
+      `Try formats like: 1A, 1/A, https://codeforces.com/contest/1/problem/A, https://codeforces.com/group/abc123/contest/1/problem/A`
     );
   }
 
@@ -467,6 +527,7 @@ export async function initProblem(
     name: metadata?.title || `${ref.contestId}${ref.index}`,
     addedAt: Date.now(),
     metadata,
+    cfRef: ref,
     timeSpentMs: 0,
     solved: false,
   };
@@ -569,16 +630,37 @@ export async function refreshProblemMetadata(
   const problemIndex = problems.findIndex((p) => p.id === problemId);
   if (problemIndex < 0) return null;
 
-  const ref = getCfRefFromId(problemId);
+  const ref = await resolveCfProblemRef(problemId);
   const metadata = await fetchProblemMetadata(ref);
 
   const problem = problems[problemIndex]!;
+  problem.cfRef = ref;
   problem.metadata = metadata;
   problem.name = metadata.title;
 
   await saveProblems(problems);
   log(`=== refreshProblemMetadata END ===`);
   return problem;
+}
+
+export async function resolveCfProblemRef(problemId: string): Promise<CfProblemRef> {
+  const problems = await loadProblems();
+  const problem = problems.find((p) => p.id === problemId);
+
+  if (problem?.cfRef) {
+    return problem.cfRef;
+  }
+
+  if (problem?.metadata?.contestId && problem.metadata.index) {
+    return {
+      contestId: problem.metadata.contestId,
+      index: problem.metadata.index,
+      isGym: problem.metadata.isGym ?? false,
+      groupCode: problem.metadata.groupCode,
+    };
+  }
+
+  return getCfRefFromId(problemId);
 }
 
 export async function updateProblemTimeSpent(

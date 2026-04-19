@@ -1,6 +1,11 @@
 import { createHash } from "crypto";
 import { loadCodeforcesConfig } from "./config";
-import { getSolutionFile, getLanguageFromId, getCfRefFromId } from "./problems";
+import {
+  getSolutionFile,
+  getLanguageFromId,
+  resolveCfProblemRef,
+  type CfProblemRef,
+} from "./problems";
 
 // Codeforces verdict strings returned by the API
 const VERDICT_MAP: Record<string, string> = {
@@ -103,11 +108,28 @@ async function getSessionCookies(): Promise<string | null> {
 }
 
 /** Get CSRF token from a CF page */
-async function getCsrfToken(cookies?: string): Promise<{ csrf: string; cookies: string }> {
+function getContestBaseUrl(ref: CfProblemRef): string {
+  if (ref.groupCode) {
+    return `https://codeforces.com/group/${ref.groupCode}/contest/${ref.contestId}`;
+  }
+  if (ref.isGym) {
+    return `https://codeforces.com/gym/${ref.contestId}`;
+  }
+  return `https://codeforces.com/contest/${ref.contestId}`;
+}
+
+function getProblemUrl(ref: CfProblemRef): string {
+  return `${getContestBaseUrl(ref)}/problem/${ref.index}`;
+}
+
+async function getCsrfToken(
+  cookies?: string,
+  pageUrl = "https://codeforces.com/problemset"
+): Promise<{ csrf: string; cookies: string }> {
   const headers: Record<string, string> = { "User-Agent": USER_AGENT };
   if (cookies) headers["Cookie"] = cookies;
 
-  const resp = await fetch("https://codeforces.com/problemset", { headers });
+  const resp = await fetch(pageUrl, { headers });
   if (!resp.ok) throw new Error(`Failed to load CF page: ${resp.status}`);
 
   const html = await resp.text();
@@ -140,7 +162,7 @@ export async function submitSolution(
   if (!solutionFile) throw new Error("No solution file found");
 
   const lang = getLanguageFromId(problemId);
-  const ref = getCfRefFromId(problemId);
+  const ref = await resolveCfProblemRef(problemId);
   const source = await Bun.file(solutionFile).text();
 
   // Try to get session cookies
@@ -162,13 +184,10 @@ export async function submitSolution(
   }
 
   // Get CSRF token
-  const { csrf, cookies: updatedCookies } = await getCsrfToken(cookies);
+  const contestBaseUrl = getContestBaseUrl(ref);
+  const submitUrl = `${contestBaseUrl}/submit`;
+  const { csrf, cookies: updatedCookies } = await getCsrfToken(cookies, submitUrl);
   cookies = updatedCookies;
-
-  // Build submit URL
-  const submitUrl = ref.isGym
-    ? `https://codeforces.com/gym/${ref.contestId}/submit`
-    : `https://codeforces.com/contest/${ref.contestId}/submit`;
 
   const formData = new URLSearchParams();
   formData.set("csrf_token", csrf);
@@ -186,7 +205,7 @@ export async function submitSolution(
       "User-Agent": USER_AGENT,
       "Cookie": cookies,
       "Content-Type": "application/x-www-form-urlencoded",
-      "Referer": `https://codeforces.com/contest/${ref.contestId}/submit`,
+      "Referer": submitUrl,
     },
     body: formData.toString(),
     redirect: "manual",
@@ -284,10 +303,8 @@ export async function submitSolution(
 
 /** Open the CF problem page in the browser (fallback for manual submission) */
 export async function openProblemInBrowser(problemId: string): Promise<void> {
-  const ref = getCfRefFromId(problemId);
-  const url = ref.isGym
-    ? `https://codeforces.com/gym/${ref.contestId}/problem/${ref.index}`
-    : `https://codeforces.com/problemset/problem/${ref.contestId}/${ref.index}`;
+  const ref = await resolveCfProblemRef(problemId);
+  const url = getProblemUrl(ref);
   try {
     Bun.spawn(["xdg-open", url], { stdout: "ignore", stderr: "ignore" });
   } catch {
