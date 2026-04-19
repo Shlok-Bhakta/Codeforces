@@ -80,5 +80,30 @@
     },
     "timeSpentMs": 613555.330692,
     "solved": false
+  },
+  {
+    "id": "517960M-cpp",
+    "name": "Monolingual Nightmare",
+    "addedAt": 1776564209908,
+    "metadata": {
+      "title": "Monolingual Nightmare",
+      "cpuLimit": "30s",
+      "memoryLimit": "256 MB",
+      "difficulty": "?",
+      "description": "time limit per test\n1 second\nmemory limit per test\n256 megabytes\ninput\nstandard input\noutput\nstandard output\n\nIt was almost so perfect! You uncovered the secret location where the ACPC problemsetters meet. To listen in on the meetings, you snuck a parrot into the problemsetters' meeting room. Now, the parrot can listen in on the meeting and recite what the problemsetters say right back to you. It's a flawless plan – except for the fact that this parrot only speaks Spanish.\nYour parrot has a flawless memory and will remember every word that the problemsetters say in order. However, since the problemsetters speak in a different language than the Parrot, the parrot will only remember the words that sound similar to words that it knows in Spanish. All other words will be unrecognizable and replaced with a \"???\".\nThe meeting has concluded and the parrot has fully recited the conversation to you, in Spanish. Now, it's up to you to determine what the problemsetters could have said in English! As a result, for many candidate English conversations, which ones are possible conversations the problemsetters could have had?\n\nInput\nThe first line contains integers $$$N$$$, $$$L$$$, and $$$Q$$$ ($$$1 \\le N, L, Q \\le 100$$$): the number of words in the parrot's dictionary, the length of the conversation in words, and the number of queries.\nThe next $$$N$$$ lines follow the format \"$$$a$$$ <=> $$$b$$$\", where $$$a$$$ is an English word and $$$b$$$ is a Spanish word which sounds similar. No word will appear will appear twice in this dictionary, and no English word will also be a Spanish word (or visa versa).\nThen, a blank line.\nThe next line contains $$$L$$$ words: the conversation the parrot recited, in Spanish. Unrecognized words will be labeled with a \"???\".\nThen, a blank line.\nThe next $$$Q$$$ lines each contain one candidate English conversation, each also of length $$$L$$$.\n\nOutput\nFor each candidate English conversation, output \"YES\" or \"NO\" if it is possible for the problemsetters to have spoken that conversation.",
+      "tags": [],
+      "contestId": 517960,
+      "index": "M",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "cfRef": {
+      "contestId": 517960,
+      "index": "M",
+      "isGym": false,
+      "groupCode": "EW9LgKVDr6"
+    },
+    "timeSpentMs": 1299005.682171,
+    "solved": false
   }
 ]
